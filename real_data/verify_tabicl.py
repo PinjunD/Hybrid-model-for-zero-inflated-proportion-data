@@ -1,4 +1,4 @@
-"""Reproduce the TabICL rows of Tables 4-5 with the paper's metrics."""
+"""Reproduce the TabICLv2 rows of Table 3 with the paper's metrics."""
 import sys
 from pathlib import Path
 PKG = Path(__file__).resolve().parents[1]
