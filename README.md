@@ -35,12 +35,12 @@ algorithm/          core methods
   metrics           AUC, AUPRC, theta error
 simulation/         Section 5.1
   dgp               three support configurations
-  run_simulation    single entry: Tables 2-3, Figures 2-3, both GIFs
+  run_simulation    single entry: Table 2, Figures C.1-C.2, both GIFs
 real_data/          Section 5.2
   load_data         trawl + turtle loaders (data/ inside this repo)
   run_experiment    folds + R baselines (hurdle/ZIB/ZOIB) + TabICL folds
-  rerun_all         ours rows of Tables 4-5, diagnostics, support figures
-  verify_tabicl     TabICL rows of Tables 4-5
+  rerun_all         ours/baseline rows of Table 3, diagnostics, support figures
+  verify_tabicl     TabICL rows of Table 3
 results/            generated outputs
   temp/             cached JSON/CSV (reproducible)
   figure/           all figures
@@ -53,23 +53,20 @@ R with glmmTMB + gamlss; `pip install tabicl==2.0.2` for the TabICLv2 rows --
 note tabicl >= 2.0.0 ships the TabICLv2 checkpoints cited in the paper):
 
 ```bash
-# Simulation: Tables 2-3 at n=1000 (300 reps), Figures 2-3, GIFs  (~8 min)
+# Simulation: Table 2 at n=1000 (300 reps), Figures C.1-C.2, GIFs  (~8 min)
 python simulation/run_simulation.py
 
 # Real data: regenerate folds + R baselines + TabICL inference (~3 min)
 python real_data/run_experiment.py
 
-# Real data: ours/baseline rows of Tables 4-5, support figures (~1 min)
+# Real data: ours/baseline rows of Table 3, support figures (~1 min)
 python real_data/rerun_all.py
 
-# Real data: TabICL rows of Tables 4-5 (~2 min)
+# Real data: TabICL rows of Table 3 (~2 min)
 python real_data/verify_tabicl.py
 ```
 
 Outputs land in `results/temp` (JSON) and `results/figure` (PDF/GIF).
-`simulation/regen_support_conv_fig.py` redraws Figure 3 from the cached
-JSON without recomputation.
-
 ## Settings (final, as in the manuscript)
 
 - Simulation grid: m in {5,10,15}, n in {200,...,1000}, 300 replications,
@@ -84,14 +81,17 @@ JSON without recomputation.
 | Paper item | Output |
 |---|---|
 | Table 1 (cases) | manual |
-| Table 2 (theta) | run_simulation.py stdout / results/temp/sim_theta.json |
-| Table 3 (support) | run_simulation.py stdout / results/temp/sim_support_conv.json |
+| Table 2, coefficient block | run_simulation.py stdout / results/temp/sim_theta.json |
+| Table 2, support block | run_simulation.py stdout / results/temp/sim_support_conv.json |
+| Table 3, trawl block | rerun_all_intercept.json (trawl) + verify_tabicl.py |
+| Table 3, turtle block | rerun_all_intercept.json (turtle) + verify_tabicl.py |
 | Figure 1 (trawl) | results/figure/fig_trawl_support.pdf |
-| Figure 2 (theta conv.) | results/figure/fig_sim_theta.pdf |
-| Figure 3 (support conv.) | results/figure/fig_sim_support_conv.pdf |
-| Figure 4 (turtle) | results/figure/fig_turtle_support.pdf |
-| Table 4 (trawl) | rerun_all_intercept.json + verify_tabicl.py (trawl) |
-| Table 5 (turtle) | rerun_all_intercept.json + verify_tabicl.py (turtle) |
+| Figure 2 (turtle) | results/figure/fig_turtle_support.pdf |
+| Figure C.1 (theta conv.) | results/figure/fig_sim_theta.pdf |
+| Figure C.2 (support conv.) | results/figure/fig_sim_support_conv.pdf |
+
+The two GIFs in results/figure are supplementary animations of the
+two convergence figures and are not part of the paper.
 
 ## Remarks (implementation details)
 
