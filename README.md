@@ -1,4 +1,4 @@
-﻿# hybrid_model_for_zero_inflated_proportion_data
+﻿# Hybrid model for zero-inflated proportion data
 
 Numerical study for the zero-inflated binomial support paper.
 
