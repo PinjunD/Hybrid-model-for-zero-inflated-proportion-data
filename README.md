@@ -11,9 +11,11 @@ directory:
 
 ```bash
 python simulation/run_simulation.py    # Table 2 + Figures C.1-C.2 + GIFs  (~8 min)
-python real_data/run_experiment.py     # folds + R baselines               (~1 min)
-python real_data/rerun_all.py          # Table 3 + Figures 1-2             (~1 min)
-python real_data/verify_tabicl.py      # Table 3, TabICLv2 rows            (~2 min)
+python real_data/run_experiment.py     # folds + R baselines (turtle)      (~1 min)
+python real_data/rerun_all.py          # Table 3, turtle rows              (~1 min)
+python real_data/full_sample.py        # Table 3, trawl rows (full sample) (~2.5 min)
+python real_data/figures.py            # Figures 1-2 (full-sample fits)    (~1 min)
+python real_data/verify_tabicl.py      # TabICLv2 rows of Table 3          (~2 min turtle / ~69 min trawl full)
 ```
 
 ## Framework
@@ -46,14 +48,19 @@ theoretical bandwidth (Table 2).
 **Real data** — five-fold cross-validation, same folds for every
 method (Table 3).
 
-| ![trawl region](results/figure/png/fig_trawl_support.png) | ![turtle region](results/figure/png/fig_turtle_support.png) |
+| ![trawl region](results/figure/fig_trawl_full.pdf) | ![turtle region](results/figure/fig_turtle_support.pdf) |
 |---|---|
-| *Trawl (n = 3,367): the recovered cod habitat traces the thermal front; the check supports it (1, 8, 35 cod-containing hauls in the bottom 5/10/20%).* | *Turtle nests (n = 164): small sample, nearly linear boundary; best MAE on both datasets, AUC/MCC within one SE of TabICLv2.* |
+| *Trawl (n = 30,131, full sample): the recovered cod habitat traces the curved thermal front; the model check supports it (0, 4, 87 cod-containing hauls in the bottom 5/10/20%).* | *Turtle nests (n = 164): small sample, nearly linear boundary; best MAE on both datasets, AUC/MCC within one SE of TabICLv2.* |
 
 | dataset | best MAE | ours | TabICLv2 |
 |---|---|---|---|
-| trawl  | ours .0442 | AUC .788 / MCC .347 | .793 / .358 |
+| trawl  | ours .0167 | AUC .842 / MCC .375 | .492 / -.020 |
 | turtle | ours .2116 | AUC .837 / MCC .456 | .845 / .472 |
+
+On the full trawl sample m spans six orders of magnitude, so the
+positivity probability is driven by m: our score models this dependence
+explicitly and dominates, while positivity scores without m (the
+parametric gates, TabICLv2) fall to the chance level (AUC ~ .49).
 
 ## Notes
 
