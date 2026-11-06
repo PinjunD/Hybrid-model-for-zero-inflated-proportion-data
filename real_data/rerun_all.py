@@ -1,4 +1,4 @@
-"""Final real-data pipeline (matches the manuscript).
+﻿"""Final real-data pipeline (matches the manuscript).
 
 1. Ours per-fold (theta with intercept, gate, all scores)
 2. Full-fit theta and coefficients for interpretation
@@ -72,38 +72,25 @@ def mae(y, p):
 # ---------- support figure ----------
 
 def make_figure(X, Y, m, theta, W, h, tau, columns, title, out_path):
+    """Support figure in the shared journal style (algorithm/plotting)."""
+    from algorithm.plotting import paper_style, support_figure
+
     mu, sd = X.mean(0), X.std(0)
-    Xs_raw = (X - mu) / sd
-    Xs = np.column_stack([Xs_raw, np.ones(len(Xs_raw))])
-    x1g = np.linspace(X[:, 0].min(), X[:, 0].max(), 100)
-    x2g = np.linspace(X[:, 1].min(), X[:, 1].max(), 100)
-    Xg_raw = np.array([[(a - mu[0]) / sd[0], (b - mu[1]) / sd[1]]
-                       for a in x1g for b in x2g])
-    Xg = np.column_stack([Xg_raw, np.ones(len(Xg_raw))])
+    Xs = np.column_stack([(X - mu) / sd, np.ones(len(X))])
+    x1g = np.linspace(X[:, 0].min(), X[:, 0].max(), 120)
+    x2g = np.linspace(X[:, 1].min(), X[:, 1].max(), 120)
+    Xg = np.column_stack([
+        np.array([[(a - mu[0]) / sd[0], (b - mu[1]) / sd[1]]
+                  for a in x1g for b in x2g]),
+        np.ones(len(x1g) * len(x2g))])
     Wg = nw_pred(Xs, W, Xg, h).reshape(len(x1g), len(x2g))
 
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-    ax = axes[0]
-    ax.scatter(X[Y > 0, 0], X[Y > 0, 1], c="black", s=8, alpha=0.4, label="positive")
-    ax.scatter(X[Y == 0, 0], X[Y == 0, 1], c="crimson", marker="x", s=8, alpha=0.4, label="zero")
-    ax.set_xlabel(columns[0])
-    ax.set_ylabel(columns[1])
-    ax.set_title("observed data")
-    ax.legend(fontsize=8)
-
-    ax = axes[1]
-    im = ax.contourf(x1g, x2g, np.clip(Wg.T, 0, 1), levels=np.linspace(0, 1, 21),
-                     cmap="RdYlBu_r")
-    ax.contour(x1g, x2g, Wg.T, levels=[tau], colors="black",
-               linewidths=2, linestyles="--")
-    plt.colorbar(im, ax=ax)
-    ax.set_xlabel(columns[0])
-    ax.set_ylabel(columns[1])
-    ax.set_title("suitable region")
-
-    fig.suptitle(title, fontsize=12)
-    fig.tight_layout()
-    fig.savefig(str(out_path), dpi=180, bbox_inches="tight")
+    paper_style()
+    fig = support_figure(
+        X, Y, Wg, x1g, x2g, tau=tau,
+        xlabel=columns[0], ylabel=columns[1],
+        title_left="Observed data")
+    fig.savefig(str(out_path), dpi=300, bbox_inches="tight")
     plt.close(fig)
     print(f"  saved {out_path} (tau={tau:.3f})")
 
@@ -173,10 +160,6 @@ def main():
         np.fill_diagonal(Kf, 0)
         Dl_full = (Kf @ W_full) / np.maximum(Kf.sum(1), EPS)
         tau_full = 0.5
-
-        make_figure(X, Y, m, th_full, W_full, h_full, tau_full,
-                    cols, f"{tag.capitalize()}: support estimate",
-                    FIGD / f"fig_{tag}_support.pdf")
 
         # ---- metrics ----
         b = base[base.dataset == tag]
