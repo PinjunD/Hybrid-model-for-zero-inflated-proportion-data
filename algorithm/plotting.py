@@ -42,7 +42,7 @@ def support_figure(X, Y, Wg, x1g, x2g, tau=0.5,
     if point_size is None:
         point_size = (5, 4) if n > 2000 else (18, 16)
     if alpha is None:
-        alpha = (0.35, 0.07) if n > 2000 else (0.8, 0.7)
+        alpha = (0.35, 0.18) if n > 2000 else (0.8, 0.75)
 
     fig, axes = plt.subplots(1, 2, figsize=figsize, sharex=True,
                              sharey=True)
@@ -50,22 +50,22 @@ def support_figure(X, Y, Wg, x1g, x2g, tau=0.5,
     ax.scatter(X[Y > 0, 0], X[Y > 0, 1], c="#B2182B", marker="o",
                s=point_size[0], alpha=alpha[0], rasterized=True,
                linewidths=0, label="positive")
-    ax.scatter(X[Y == 0, 0], X[Y == 0, 1], c="#4393C3", marker="x",
-               s=point_size[1], alpha=alpha[1], rasterized=True,
-               linewidths=0.7 if n <= 2000 else 0.4, label="zero")
+    ax.scatter(X[Y == 0, 0], X[Y == 0, 1], c="#1A5276", marker="x",
+               s=point_size[1] * 1.1, alpha=alpha[1], rasterized=True,
+               linewidths=0.9 if n <= 2000 else 0.6, label="zero")
     ax.set_title(title_left)
     ax.legend(loc="upper right", frameon=True, framealpha=0.95,
               edgecolor="0.8", markerscale=2.2 if n > 2000 else 1.1)
 
     ax = axes[1]
+    Wg = np.clip(Wg, 0.0, 1.0)
     im = ax.contourf(x1g, x2g, Wg.T, levels=np.linspace(0, 1, 21),
-                     cmap="viridis", vmin=0, vmax=1)
+                     cmap="YlOrRd", vmin=0, vmax=1)
     ax.contour(x1g, x2g, Wg.T, levels=[tau], colors="black",
                linewidths=1.8, linestyles="--")
     cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.02,
                       ticks=np.linspace(0, 1, 6))
     cb.ax.tick_params(labelsize=8)
-    cb.set_label(r"$\hat Z(X)$", fontsize=9.5)
     cb.ax.plot([0, 1], [tau, tau], color="black", lw=1.2, ls="--")
     ax.set_title(title_right)
 
