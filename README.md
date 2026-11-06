@@ -10,12 +10,13 @@ glmmTMB + gamlss, and `pip install tabicl==2.0.2`. Run from this
 directory:
 
 ```bash
-python simulation/run_simulation.py    # Table 2 + Figures C.1-C.2 + GIFs  (~8 min)
+python simulation/run_simulation.py    # Tables 2-3 + Figures 2-3          (~8 min)
+python simulation/redraw_figs.py       # re-style Figures 2-3 from cache   (instant)
 python real_data/run_experiment.py     # folds + R baselines (turtle)      (~1 min)
-python real_data/rerun_all.py          # Table 3, turtle rows              (~1 min)
-python real_data/full_sample.py        # Table 3, trawl rows (full sample) (~2.5 min)
-python real_data/figures.py            # Figures 1-2 (full-sample fits)    (~1 min)
-python real_data/verify_tabicl.py      # TabICLv2 rows of Table 3          (~2 min turtle / ~69 min trawl full)
+python real_data/rerun_all.py          # Table 5 (turtle CV)               (~1 min)
+python real_data/full_sample.py        # Table 4 (trawl full-sample CV)    (~2.5 min)
+python real_data/figures.py            # Figures 1 and 4 (full-sample fits)(~1 min)
+python real_data/verify_tabicl.py      # TabICLv2 rows, Table 5            (~2 min)
 ```
 
 ## Framework

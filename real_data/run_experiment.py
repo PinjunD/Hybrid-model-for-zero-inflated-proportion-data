@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 
 from config import TEMP, ensure_dirs
-from load_data import load_trawl, load_turtle
+from load_data import load_turtle
 
 RSCRIPT = r"C:\Program Files\R\R-4.6.1\bin\x64\Rscript.exe"
 
@@ -103,7 +103,7 @@ def fit_baselines():
     """Export data + folds, run R script, return baseline preds."""
     ensure_dirs()
     folds = {}
-    for tag, loader in [("trawl", load_trawl), ("turtle", load_turtle)]:
+    for tag, loader in [("turtle", load_turtle)]:
         d = loader()
         X, Y, m = d["X"], d["Y"], d["m"]
         pd.DataFrame({"x1": X[:, 0], "x2": X[:, 1],
@@ -113,7 +113,9 @@ def fit_baselines():
                       for f in folds_of(len(Y))]
     (TEMP / "folds.json").write_text(json.dumps(folds))
 
-    src = R_CODE.replace("RESULTS_TEMP", str(TEMP).replace("\\", "/"))
+    src = (R_CODE.replace("RESULTS_TEMP", str(TEMP).replace("\\", "/"))
+            .replace('for (tag in c("trawl", "turtle")) {',
+                     'for (tag in c("turtle")) {'))
     with tempfile.NamedTemporaryFile("w", suffix=".R", delete=False,
                                      encoding="utf-8") as fh:
         fh.write(src)

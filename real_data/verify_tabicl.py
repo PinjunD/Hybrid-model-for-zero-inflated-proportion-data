@@ -1,4 +1,8 @@
-"""Reproduce the TabICLv2 rows of Table 3 with the paper's metrics."""
+"""TabICLv2 rows for the turtle data (Table 5).
+
+The trawl (full-sample) TabICLv2 rows are produced by
+real_data/full_sample.py --with-tabicl.
+"""
 import sys
 from pathlib import Path
 PKG = Path(__file__).resolve().parents[1]
@@ -6,11 +10,11 @@ sys.path.insert(0, str(PKG))
 sys.path.insert(0, str(PKG / "real_data"))
 import numpy as np
 
-from load_data import load_trawl, load_turtle
+from load_data import load_turtle
 from rerun_all import mae, wauc, wmcc
 from run_experiment import folds_of, tabicl_rows
 
-for tag, loader in (("trawl", load_trawl), ("turtle", load_turtle)):
+for tag, loader in (("turtle", load_turtle),):
     d = loader()
     Y, m = d["Y"], d["m"]
     pos = Y > 0

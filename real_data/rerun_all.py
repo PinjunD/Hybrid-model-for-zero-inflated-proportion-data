@@ -1,15 +1,14 @@
-﻿"""Final real-data pipeline (matches the manuscript).
+﻿"""Turtle CV: ours and baselines for Table 5 (loggerhead nests).
 
-1. Ours per-fold (theta with intercept, gate, all scores)
-2. Full-fit theta and coefficients for interpretation
-3. Metrics: MAE, weighted AUC, weighted MCC
-4. Diagnostic (bottom 5/10/20 percent counts, out-of-fold)
-5. Support figures (trawl + turtle)
+Five-fold cross-validation on the turtle data (n = 164): our method,
+the R parametric baselines (hurdle, ZIB, ZOIB, from run_experiment.py),
+weighted AUC/MCC and unweighted MAE with fold SEs, and the model-check
+counts. The trawl analysis uses the full unscreened sample and lives in
+full_sample.py; the support figures live in figures.py.
 
-Outputs:
-  results/temp/rerun_all_intercept.json
-  results/figure/fig_trawl_support.pdf
-  results/figure/fig_turtle_support.pdf
+Run from the repository root:
+    python real_data/run_experiment.py   # first: folds + R baselines
+    python real_data/rerun_all.py
 """
 import json
 import sys
@@ -29,7 +28,7 @@ from algorithm.estimators import fit_debiased
 from algorithm.kernel_support import corrected_target, nw_bw, nw_pred
 from algorithm.model import sig
 from config import HS_REAL, TEMP, FIGD, ensure_dirs
-from load_data import load_trawl, load_turtle
+from load_data import load_turtle
 from run_experiment import folds_of
 
 EPS = 1e-12
@@ -103,7 +102,7 @@ def main():
     out = {}
     base = pd.read_csv(TEMP / "baseline_preds.csv")
 
-    for tag, loader in (("trawl", load_trawl), ("turtle", load_turtle)):
+    for tag, loader in (("turtle", load_turtle),):
         d = loader()
         X, Y, m = d["X"], d["Y"], d["m"]
         cols = d.get("columns", ["cov1", "cov2"])
@@ -237,8 +236,8 @@ def main():
         print(f"  diag: {res['_diag']}")
         print()
 
-    (TEMP / "rerun_all_intercept.json").write_text(json.dumps(out, indent=2))
-    print(f"Done ({time.time()-t0:.0f}s). saved -> {TEMP / 'rerun_all_intercept.json'}")
+    (TEMP / "turtle_cv.json").write_text(json.dumps(out, indent=2))
+    print(f"Done ({time.time()-t0:.0f}s). saved -> {TEMP / 'turtle_cv.json'}")
 
 
 if __name__ == "__main__":
