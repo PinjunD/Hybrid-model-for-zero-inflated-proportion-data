@@ -1,9 +1,7 @@
 ﻿# Hybrid model for zero-inflated proportion data
 
 Code for the numerical study of "A hybrid model for zero-inflated
-proportion data". Model: `mY | X ~ Bin(m, sigma(X'theta) * I_S(X))`;
-estimation by a debiased MLE for `theta` plus a kernel estimate of the
-unsuitable region `S`, checked by a bottom-percent diagnostic.
+proportion data". Model: `mY | X ~ Bin(m, sigma(X'theta) * I_S(X))`.
 
 ## How to use
 
@@ -61,6 +59,9 @@ method (Table 3).
 
 - Seeds fixed (`config.sim_seed`, `default_rng(42)`): runs reproduce
   the cached JSON and the paper numbers bit-for-bit.
+- Trawl analysis sample: hauls with non-missing `btemp` and `depth`
+  and 50 <= `n_total` <= 500 (n = 3,367); turtle nests with complete
+  covariates (n = 164).
 - All methods fit on fold-standardized covariates (R side included);
   bandwidth LOO-CV subsamples to at most 1,500 points; two stability
   guards (denominator floor 0.05, Newton ridge 1e-10) never activate.

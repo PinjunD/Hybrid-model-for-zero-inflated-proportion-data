@@ -18,7 +18,7 @@ def load_trawl():
     aggregated to one row per haul.
     """
     g = pd.read_csv(DATA / "trawl.csv")
-    keep = g.btemp.notna() & g.btemp.gt(-2) \
+    keep = g.btemp.notna() & g.btemp.gt(-2) & g.depth.notna() \
         & g.n_total.between(50, 500)
     g = g[keep]
     return {
