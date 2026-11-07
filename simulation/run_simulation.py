@@ -1,12 +1,14 @@
-﻿"""Rerun everything under the new settings.
+﻿"""Full simulation study: coefficient and support estimation.
 
-- n grid: {200,400,600,800,1000}; tables at n=200; m in {5,10,15}; 300 reps.
+- n grid: {200,400,600,800,1000}; tables at n=1000 (config.NTAB);
+  m in {5,10,15}; 300 reps.
 - Support estimation uses the theoretical bandwidth of Theorem thm:support:
   h_n = (log n / n)^{1/3}   (alpha=1, C=1, d=2).
 - Outputs: sim_theta.json, sim_support_conv.json, fig_sim_theta.pdf,
-  fig_sim_support_conv.pdf, fig_sim_recovery.pdf (single n=200),
-  and LaTeX-ready table rows with bold (best
+  fig_sim_support_conv.pdf, and LaTeX-ready table rows with bold (best
   non-oracle) / underline (second best) marks.
+- The paper's Figures 2-3 (serif style, M axis) are re-emitted from
+  the cache by simulation/redraw_figs.py.
 
 Run from hybrid_model_for_zero_inflated_proportion_data/.
 """

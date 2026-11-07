@@ -5,9 +5,9 @@ proportion data". Model: `mY | X ~ Bin(m, sigma(X'theta) * I_S(X))`.
 
 ## How to use
 
-Python 3.9+ (numpy, scipy, pandas, matplotlib, imageio), R with
-glmmTMB + gamlss, and `pip install tabicl==2.0.2`. Run from this
-directory:
+Python 3.9+ (numpy, pandas, matplotlib), R with jsonlite + glmmTMB +
+gamlss (`Rscript` on the PATH), and `pip install tabicl==2.0.2`. Run
+from this directory:
 
 ```bash
 python simulation/run_simulation.py    # Tables 2-3 + Figures 2-3          (~8 min)
@@ -19,14 +19,20 @@ python real_data/figures.py            # Figures 1 and 4 (full-sample fits)(~1 m
 python real_data/verify_tabicl.py      # TabICLv2 rows, Table 5            (~2 min)
 ```
 
+`full_sample.py --with-tabicl` adds the TabICLv2 row of Table 4
+(~69 min). The cached JSON in `results/temp/` holds every number in
+the paper's tables.
+
 ## Framework
 
 ```
 data/            trawl.csv, turtle.csv          # the two analysis datasets
-algorithm/       model, estimators, kernel_support, metrics
-simulation/      dgp.py, run_simulation.py      # Table 2, Figures C.1-C.2
-real_data/       load_data, run_experiment,     # Table 3, Figures 1-2
-                 rerun_all, verify_tabicl
+algorithm/       model, estimators, kernel_support, metrics, plotting
+simulation/      dgp, run_simulation,           # Tables 2-3, Figures 2-3
+                 redraw_figs
+real_data/       load_data, run_experiment,     # Tables 4-5, Figures 1, 4
+                 rerun_all, full_sample,
+                 figures, verify_tabicl
 results/         figure/ (paper figures), temp/ (cached JSON, reproducible)
 ```
 
@@ -35,21 +41,21 @@ results/         figure/ (paper figures), temp/ (cached JSON, reproducible)
 | Debiased MLE (Newton) | `algorithm/estimators.py::fit_debiased` |
 | Corrected outcome + NW support, tau = 1/2 | `algorithm/kernel_support.py` |
 | Bandwidth: `(log n/n)^(1/3)` (simulation), LOO-CV (real data) | `kernel_support.py::bw_theory` / `nw_bw` |
-| Model check (bottom 5/10/20% counts, out-of-fold) | `real_data/rerun_all.py` |
+| Model check (bottom 5/10/20% counts, out-of-fold) | `real_data/rerun_all.py`, `real_data/full_sample.py` |
 
 ## Results
 
 **Simulation** — n = 1000, 300 replications, m in {5,10,15}, tau = 1/2,
-theoretical bandwidth (Table 2).
+theoretical bandwidth (Tables 2-3).
 
 | ![theta convergence](results/figure/png/fig_sim_theta.png) | ![support convergence](results/figure/png/fig_sim_support_conv.png) |
 |---|---|
 | *Left: mean squared error of the coefficient estimators vs M = nm; ours tracks the oracle and beats the uncorrected MLE wherever sigma is small (Cases 2-3).* | *Right: support error vs n; ours is 1.2-4.1 times more accurate in Cases 2-3.* |
 
 **Real data** — five-fold cross-validation, same folds for every
-method (Table 3).
+method (Tables 4-5).
 
-| ![trawl region](results/figure/fig_trawl_full.pdf) | ![turtle region](results/figure/fig_turtle_support.pdf) |
+| ![trawl region](results/figure/png/fig_trawl_full.png) | ![turtle region](results/figure/png/fig_turtle_support.png) |
 |---|---|
 | *Trawl (n = 30,131, full sample): the recovered cod habitat traces the curved thermal front; the model check supports it (0, 4, 87 cod-containing hauls in the bottom 5/10/20%).* | *Turtle nests (n = 164): small sample, nearly linear boundary; best MAE on both datasets, AUC/MCC within one SE of TabICLv2.* |
 
@@ -67,9 +73,9 @@ parametric gates, TabICLv2) fall to the chance level (AUC ~ .49).
 
 - Seeds fixed (`config.sim_seed`, `default_rng(42)`): runs reproduce
   the cached JSON and the paper numbers bit-for-bit.
-- Trawl analysis sample: hauls with non-missing `btemp` and `depth`
-  and 50 <= `n_total` <= 500 (n = 3,367); turtle nests with complete
-  covariates (n = 164).
+- Trawl full sample: hauls with observed `btemp` (> -2 C) and `depth`
+  and `n_total >= 1` (n = 30,131); turtle nests with complete
+  covariates (n = 164 of 170 recorded).
 - All methods fit on fold-standardized covariates (R side included);
   bandwidth LOO-CV subsamples to at most 1,500 points; two stability
   guards (denominator floor 0.05, Newton ridge 1e-10) never activate.

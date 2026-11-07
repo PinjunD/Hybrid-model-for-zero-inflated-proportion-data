@@ -9,6 +9,7 @@ imports tabicl_rows below. Run from hybrid_model_for_zero_inflated_proportion_da
     python real_data/run_experiment.py
 """
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -24,7 +25,7 @@ import pandas as pd
 from config import TEMP, ensure_dirs
 from load_data import load_turtle
 
-RSCRIPT = r"C:\Program Files\R\R-4.6.1\bin\x64\Rscript.exe"
+RSCRIPT = shutil.which("Rscript") or r"C:\Program Files\R\R-4.6.1\bin\x64\Rscript.exe"
 
 
 def folds_of(n, k=5, seed=42):

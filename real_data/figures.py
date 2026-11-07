@@ -1,10 +1,10 @@
-"""Full-sample support figures (paper Figures 1 and 2).
+"""Full-sample support figures (paper Figures 1 and 4).
 
 Task separation: this script does NO cross-validation. It fits the
 debiased MLE once on the full sample of each dataset and draws the
 support estimate. Performance comparisons live in rerun_all.py
-(screened sample) and full_sample.py (unscreened trawl sample), both
-of which are cross-validation only.
+(turtle CV) and full_sample.py (trawl full-sample CV), both of which
+are cross-validation only.
 
 Outputs: results/figure/fig_trawl_full.pdf, fig_turtle_support.pdf.
 Run from the repository root:

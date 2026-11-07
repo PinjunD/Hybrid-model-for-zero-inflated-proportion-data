@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-PKG = Path(r"C:\Users\13299\Desktop\paper\hybrid_model_for_zero_inflated_proportion_data")
+PKG = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PKG))
 
 import matplotlib
