@@ -17,10 +17,10 @@ python real_data/rerun_all.py          # Table 5 (turtle CV)               (~1 m
 python real_data/full_sample.py        # Table 4 (trawl full-sample CV)    (~2.5 min)
 python real_data/figures.py            # Figures 1 and 4 (full-sample fits)(~1 min)
 python real_data/verify_tabicl.py      # TabICLv2 rows, Table 5            (~2 min)
+python real_data/check_tabicl_trawl.py # TabICLv2 row, Table 4             (~69 min)
 ```
 
-`full_sample.py --with-tabicl` adds the TabICLv2 row of Table 4
-(~69 min). The cached JSON in `results/temp/` holds every number in
+The cached JSON in `results/temp/` holds every number in
 the paper's tables.
 
 ## Framework
@@ -61,13 +61,16 @@ method (Tables 4-5).
 
 | dataset | best MAE | ours | TabICLv2 |
 |---|---|---|---|
-| trawl  | ours .0167 | AUC .842 / MCC .375 | .492 / -.020 |
+| trawl  | ours .0167 | AUC .842 / MCC .375 | .870 / .435 |
 | turtle | ours .2116 | AUC .837 / MCC .456 | .845 / .472 |
 
-On the full trawl sample m spans six orders of magnitude, so the
-positivity probability is driven by m: our score models this dependence
-explicitly and dominates, while positivity scores without m (the
-parametric gates, TabICLv2) fall to the chance level (AUC ~ .49).
+On the full trawl sample the three parametric gates stay at the chance
+level (AUC ~ .49): no haul has y = 1, and their shared linear logit in
+(btemp, depth) cannot separate zero from positive hauls. Our score
+pairs the m-aware positivity probability with the nonparametric
+support estimate and reaches AUC .842 / MCC .375; TabICLv2, also
+nonlinear in the covariates, reaches .870 / .435. Ours keeps the best
+MAE on both datasets (.0167 versus .0233 on the trawl).
 
 ## Notes
 

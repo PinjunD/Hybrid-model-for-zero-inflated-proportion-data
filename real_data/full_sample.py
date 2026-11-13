@@ -110,10 +110,10 @@ def r_baselines_cv(X, Y, m, folds):
             for meth in ("hurdle", "zib", "zoib")}
 
 
-def tabicl_cv(loader, folds):
+def tabicl_cv(loader_fn, folds):
     """TabICLv2 rows (~69 min on the full sample; optional)."""
     from run_experiment import tabicl_rows
-    return tabicl_rows("trawl", loader)
+    return tabicl_rows("trawl", loader_fn)
 
 
 def metrics_with_se(y, w, pred, score, folds):
@@ -171,14 +171,14 @@ def main():
                            for k, v in out[meth].items()}, flush=True)
 
     if args.with_tabicl:
-        tab = tabicl_cv(loader, folds)
+        tab = tabicl_cv(load_full_trawl, folds)
         assert np.allclose(y_order, tab.y.values)
         out["tabicl"] = metrics_with_se(y_order, w_order, tab.p.values,
                                         tab.score.values, folds)
     else:
         out["tabicl_skipped"] = ("pass --with-tabicl to evaluate "
                                  "(~69 minutes); paper values: "
-                                 "MAE .0266, AUC .492, MCC -.020")
+                                 "MAE .0233, AUC .870, MCC .435")
 
     (TEMP / "full_sample.json").write_text(json.dumps(out, indent=2))
     print(f"\nsaved {TEMP / 'full_sample.json'} ({time.time() - t0:.0f}s)")
